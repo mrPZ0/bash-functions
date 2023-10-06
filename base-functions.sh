@@ -11,6 +11,7 @@ light_cyan="\e[96m"
 light_red="\e[91m"
 delimiter_str="="
 delimiter_len=79
+logger_time_fmt='%Y-%m-%dT%H:%M:%S%z'
 
 function __check_var() {
     local var_name=$1
@@ -24,24 +25,32 @@ function __check_var() {
     __log_debug " ${var_name} = ${!var_name}"
     
 }
-
+function __get_msg_delimiter() {
+    local result
+    local i
+    for i in $(seq 1 $delimiter_len); do  result+="$delimiter_str"; done
+    echo $result
+}
 function __msg_delimiter() {
     local result
     local i
     for i in $(seq 1 $delimiter_len); do  result+="$delimiter_str"; done
     echo $result
 }
+function __logger_date_time() {
+    echo $( date +${logger_time_fmt})
+}
 
 function __log_error() {
-    [[ "${LOGLEVEL}" == "ERROR" ]] && echo -e "[$(date +'%Y-%m-%dT%H:%M:%S%z') ${LOGLEVEL}]: $*" >&2
+    [[ "${LOGLEVEL}" == "ERROR" ]] && echo -e "[$(__logger_date_time) ${LOGLEVEL}]: $*" >&2
 }
 
 function __log_debug() {
-    [[ "${LOGLEVEL}" == "DEBUG" ]] && echo -e "[$(date +'%Y-%m-%dT%H:%M:%S%z') ${LOGLEVEL}]: $*"
+    [[ "${LOGLEVEL}" == "DEBUG" ]] && echo -e "[$(__logger_date_time) ${LOGLEVEL}]: $*"
 }
 
 function __log_info() {
-    [[ "${LOGLEVEL}" == "INFO" ]] && echo -e "[$(date +'%Y-%m-%dT%H:%M:%S%z') ${LOGLEVEL}]: $*"
+    [[ "${LOGLEVEL}" == "INFO" ]] && echo -e "[$(__logger_date_time) ${LOGLEVEL}]: $*"
 }
 
 function __msg_error() {
@@ -74,3 +83,14 @@ function __file_exist()
     fi
 }
 
+_str_trim()
+{
+    local trimmed="$1"
+
+    # Strip leading space.
+    trimmed="${trimmed## }"
+    # Strip trailing space.
+    trimmed="${trimmed%% }"
+
+    echo "$trimmed"
+}
