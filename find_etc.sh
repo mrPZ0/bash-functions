@@ -1,23 +1,28 @@
-function find_etc() {
-    local PACKAGE_NAME=$1
-    local PACKAGE_ETC_NAME=$2
+function find_config() {
+    local package_name=$1
+    local package_config_name=$2
     local result=()
-    if [[ "$PACKAGE_NAME" == "" ]]; then
-        PACKAGE_NAME="s_install"
+    if [[ "$package_name" == "" ]]; then
+        package_name="s_install"
     fi
-    if [[ "$PACKAGE_ETC_NAME" == "" ]]; then
-        PACKAGE_ETC_NAME="default.cfg"
+    if [[ "$package_config_name" == "" ]]; then
+        package_config_name="default.env"
     fi
-    etc_path=($SCRIPT_HOME/config/$PACKAGE_NAME $HOME/config/$PACKAGE_NAME ".")
+    etc_path=($SCRIPT_HOME/config/$package_name $HOME/config/$package_name ".")
     
     for folder in ${etc_path[*]}; do
-        if [[ -e "$folder/$PACKAGE_ETC_NAME" ]]; then
-            result+=$(realpath $folder/$PACKAGE_ETC_NAME)
+        if [[ -e "$folder/$package_config_name" ]]; then
+            result+=$(realpath $folder/$package_config_name)
             #break
         fi
     done
     echo $result
 }
-function load_etc() {
-
+function load_config() {
+    local package_name=$1
+    local package_config_name=$2
+    configs=$( find_etc "$package_name" "$package_config_name" )
+    for file in ${configs[*]} ; do
+    echo $file
+    done
 }
